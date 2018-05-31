@@ -33,6 +33,25 @@ from runner.koan import *
 # Your goal is to write the score method.
 
 def score(dice):
+    result=0
+    for x in set(dice):
+        x_count=dice.count(x)
+        if x_count>2:
+            if x==1:
+                result+=1000+100*(x_count-3)
+            elif x==5:
+                result+=500+50*(x_count-3)
+            else:
+                result+=x*100
+        elif x_count<3:
+            if x==5:
+                result+=50*x_count
+            if x==1:
+                result+=100*x_count
+    return result
+    
+    
+       
     # You need to write this method
     pass
 
