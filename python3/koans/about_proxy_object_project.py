@@ -21,11 +21,58 @@ from runner.koan import *
 class Proxy:
     def __init__(self, target_object):
         # WRITE CODE HERE
+        self._messages=[]
+        self._was_called=None
+        self._number_of_calls={}
+        
+        
 
         #initialize '_obj' attribute last. Trust me on this!
         self._obj = target_object
+        self._obj.__init__()
+        
 
     # WRITE CODE HERE
+    def __setattr__(self, attr_name, value):
+        if '_obj' in self.__dict__:#Checking if all variables was initialized
+            if attr_name in self.__dict__:
+                object.__setattr__(self, attr_name, value)
+            else:
+                self._messages.append(attr_name)
+                object.__setattr__(self._obj, attr_name, value)
+            if attr_name not in self._number_of_calls:
+                self._number_of_calls[attr_name]=1
+            else:
+                self._number_of_calls[attr_name]+=1
+        else:
+            object.__setattr__(self, attr_name, value)
+
+
+    def __getattr__(self,attr_name):
+        self._messages.append(attr_name)
+        if attr_name not in self._number_of_calls:
+            self._number_of_calls[attr_name]=1
+        else:
+            self._number_of_calls[attr_name]+=1
+        self._was_called=attr_name
+        return getattr(self._obj,attr_name)
+        
+
+    def messages(self):
+        return self._messages
+    
+    def was_called(self,attr_name):
+        return self._was_called==attr_name
+
+    def number_of_times_called(self,attr_name):
+        if attr_name not in self._number_of_calls:
+            return 0
+        return self._number_of_calls[attr_name]
+
+    
+    
+
+
 
 # The proxy object should pass the following Koan:
 #
